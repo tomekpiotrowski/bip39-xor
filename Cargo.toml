@@ -1,0 +1,10 @@
+[package]
+name = "bip39-xor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bip39 = { version ="2.0.0", features = ["rand"] }
+clap = { version = "4.5.0", features = ["derive"] }
+rand = "0.8.5"
+
