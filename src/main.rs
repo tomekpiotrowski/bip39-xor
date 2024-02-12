@@ -14,11 +14,16 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Generate a new mnemonic, split it into two parts and encrypt each part with a password
+    /// Generate a new mnemonic set
     Generate {
-        /// Etropy as a string of bits, 256 bits, will be generated if not provided
+        /// Seed as a string of bits, 256 bits, will be generated if neither this nor seed is
+        /// provided
         #[arg(long)]
         entropy: Option<String>,
+
+        /// Seed as a 24-word phrase
+        #[arg(long)]
+        seed: Option<String>,
     },
     /// Recover a mnemonic from two encrypted parts
     Recover {
@@ -33,8 +38,8 @@ fn main() {
     let cli = Cli::parse();
 
     match cli.command {
-        Some(Commands::Generate { entropy }) => {
-            let (mnemonic, part1, part2) = generate(entropy);
+        Some(Commands::Generate { entropy, seed }) => {
+            let (mnemonic, part1, part2) = generate(entropy, seed);
             println!("Mnemonic: {}", mnemonic);
             println!("Part 1: {}", part1);
             println!("Part 2: {}", part2);
@@ -48,9 +53,11 @@ fn main() {
 }
 
 /// Generate a new mnemonic. Create two new 264 bit entropy strings that when XORed yield the original entropy.
-fn generate(entropy: Option<String>) -> (Mnemonic, Mnemonic, Mnemonic) {
+fn generate(entropy: Option<String>, seed: Option<String>) -> (Mnemonic, Mnemonic, Mnemonic) {
     let mnemonic = if let Some(entropy) = entropy {
         mnemonic_from_bit_string(entropy)
+    } else if let Some(seed) = seed {
+        Mnemonic::parse_in(bip39::Language::English, seed).expect("Invalid mnemonic")
     } else {
         Mnemonic::generate(WORDS).expect("Failed to generate mnemonic")
     };

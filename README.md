@@ -10,11 +10,15 @@ For a given BIP39 seed it generates two other seeds that can be used to recover 
 
 ## Generation
 
-Run `cargo run -- generate --entropy 1010101....010` in the repository directory.
+`cargo run -- generate --seed 'insert_seed_here'`
 
-If no entropy is provided then it'll be generated randomly.
+or
 
-## Recovery process
+`cargo run -- generate --entropy 1010101....010`
+
+If neither seed nor entropy is provided then a new seed phrase will be generated randomly.
+
+## Recovery
 
 Run `cargo run -- recover --part1 "insert_part1_here" --part2 "insert_part2_here"` in the repository directory.
 
